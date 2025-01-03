@@ -56,7 +56,7 @@ class UserRegistrationController extends Controller
                     'remember_token' => $remember_token,
                     'document' =>  $filePath
                 ])
-                ->assignRole('App Admin');
+                ->assignRole('Afiliado');
 
             $newUser = User::latest()->first()->id;
             //Crear balance
