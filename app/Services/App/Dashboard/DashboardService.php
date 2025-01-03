@@ -24,7 +24,7 @@ class DashboardService extends AppService
             })
             ->count();
         $totalSinDeposito = $totalInvitados - $totalConDeposito;
-
+        $totalInvitados = ($totalInvitados == 0)? 1: $totalInvitados;
         $porcentajeInvitadosDepositos = ($totalInvitados - ($totalInvitados - $totalConDeposito)) / $totalInvitados;
         $porcentajeInvitadosSinDeposito = ($totalInvitados - ($totalConDeposito)) / $totalInvitados;
         $account = Account::where('id', auth()->user()->account->id)->first();
