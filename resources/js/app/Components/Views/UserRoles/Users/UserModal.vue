@@ -28,7 +28,7 @@
 
                     <!-- Mostrar PDF si es un documento PDF -->
                     <template v-if="inputs.document">
-                        <iframe :src="'https://wtm-dashboard.test/storage/app/public/' + inputs.document" width="100%"
+                        <iframe :src="'https://darkorchid-okapi-696445.hostingersite.com/storage/app/public/' + inputs.document" width="100%"
                             height="400px"></iframe>
                     </template>
                 </div>
