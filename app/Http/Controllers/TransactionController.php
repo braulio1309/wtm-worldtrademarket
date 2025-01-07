@@ -55,7 +55,7 @@ class TransactionController extends Controller
             $this->service
                 ->filters($this->filter)
                 ->with('account.user')
-                ->where('type', '!=', 'withdrawal')
+                //->where('type', '!=', 'withdrawal')
                 ->where('accountId', $user->account->id)
                 ->latest()
         ))->filter()

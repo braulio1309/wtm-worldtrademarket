@@ -5,20 +5,6 @@
                 <app-breadcrumb :page-title="'Transacciones'" :icon="'user-check'" />
             </div>
 
-
-
-            <div class="col-sm-12 col-md-6 breadcrumb-side-button">
-                <div class="float-md-right mb-3 mb-sm-3 mb-md-0">
-                    <button type="button" class="btn btn-success btn-with-shadow mr-2" data-toggle="modal"
-                        @click="operationForUserInvitation">
-                        Depositar
-                    </button>
-                    <button type="button" class="btn btn-primary btn-with-shadow" data-toggle="modal"
-                        @click="operateRoles(true)">
-                        Retirar
-                    </button>
-                </div>
-            </div>
         </div>
         <div class="row">
             <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3">
@@ -27,11 +13,8 @@
         </div>
 
         <div class="row">
-            <div class="col-12 col-sm-12 col-md-12 col-lg-5 col-xl-5 mb-4 mb-lg-0 mb-xl-0">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-4 mb-lg-0 mb-xl-0">
                 <user :data="userAndRoles.users" @action="getActionUser" />
-            </div>
-            <div class="col-12 col-sm-12 col-md-12 col-lg-7 col-xl-7">
-                <role :data="userAndRoles.roles" @action="getActionRole" />
             </div>
         </div>
 

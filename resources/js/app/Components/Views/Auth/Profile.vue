@@ -173,7 +173,7 @@ export default {
         },
         async fetchEncryptedId() {
             try {
-                const response = await axios.get('admin/user/encrypted-id');
+                const response = await axios.get('user/encrypted-id');
                 this.referralCode = response.data.encrypted_id;
             } catch (error) {
                 console.error('Error fetching referral code:', error);

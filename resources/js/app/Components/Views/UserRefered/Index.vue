@@ -1,287 +1,326 @@
 <template>
     <div class="content-wrapper">
+
         <div class="row">
             <div class="col-sm-12 col-md-6">
-                <app-breadcrumb :page-title="'Referidos'" :icon="'user-check'"/>
+                <app-breadcrumb :page-title="'Referidos'" :icon="'user-check'" />
             </div>
             <div class="col-sm-12 col-md-6 breadcrumb-side-button">
                 <div class="float-md-right mb-3 mb-sm-3 mb-md-0">
-                    <button type="button"
-                            class="btn btn-success btn-with-shadow mr-2"
-                            data-toggle="modal"
-                            @click="operationForUserInvitation">
+                    <button type="button" class="btn btn-success btn-with-shadow mr-2" data-toggle="modal"
+                        @click="operationForUserInvitation">
                         {{ $t('invite_users') }}
                     </button>
-                    
+
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-4 mb-lg-0 mb-xl-0">
-                <user :data="userAndRoles.users" @action="getActionUser"/>
+        <div class="row mb-4">
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Referencia</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Presione para compartir</td>
+                            <td>
+                                <button class="btn btn-primary" @click="copyToClipboard">
+                                    Copiar link
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            
         </div>
 
-        <user-invitation-modal v-if="userAndRoles.users.isInviteModalActive"
-                               @close-modal="closeInviteModal"/>
 
-        <user-modal v-if="userAndRoles.users.isUserModalActive"
-                    @close-modal="closeUserModal"/>
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-4 mb-lg-0 mb-xl-0">
+                <user :data="userAndRoles.users" @action="getActionUser" />
+            </div>
 
-        <manage-users-modal v-if="userAndRoles.users.isManageUsersModalActive"
-                            @close-modal="closeManageUserModal"/>
+        </div>
 
-        <roles-add-edit-modal v-if="userAndRoles.roles.isAddEditModalActive"
-                              :selected-url="selectedUrl"
-                              :manage="manage"
-                              @close-modal="closeModalRoleAddEditModal"/>
+        <user-invitation-modal v-if="userAndRoles.users.isInviteModalActive" @close-modal="closeInviteModal" />
 
-        <app-delete-modal v-if="confirmation.isActive"
-                                :preloader="deleteLoader"
-                                :modal-id="confirmation.modalId"
-                                @confirmed="confirmed"
-                                @cancelled="cancelled"/>
+        <user-modal v-if="userAndRoles.users.isUserModalActive" @close-modal="closeUserModal" />
+
+        <manage-users-modal v-if="userAndRoles.users.isManageUsersModalActive" @close-modal="closeManageUserModal" />
+
+        <roles-add-edit-modal v-if="userAndRoles.roles.isAddEditModalActive" :selected-url="selectedUrl"
+            :manage="manage" @close-modal="closeModalRoleAddEditModal" />
+
+        <app-delete-modal v-if="confirmation.isActive" :preloader="deleteLoader" :modal-id="confirmation.modalId"
+            @confirmed="confirmed" @cancelled="cancelled" />
     </div>
 </template>
 
 <script>
-    import AppLibrary from "../../../Helpers/AppLibrary";
+import AppLibrary from "../../../Helpers/AppLibrary";
 
-    import UserModal from "./Users/UserModal";
-    import UserInvitationModal from "./Users/UserInvitationModal";
-    import ManageUsersModal from "./Users/ManageUsersModal";
-    import User from "./Users/Index";
+import UserModal from "./Users/UserModal";
+import UserInvitationModal from "./Users/UserInvitationModal";
+import ManageUsersModal from "./Users/ManageUsersModal";
+import User from "./Users/Index";
 
-    import RolesAddEditModal from "./Roles/RolesAddEditModal";
-    import Role from "./Roles/Index";
+import RolesAddEditModal from "./Roles/RolesAddEditModal";
+import Role from "./Roles/Index";
 
-    import {UserAndRoleMixin} from '../Balance/Mixins/UserAndRoleMixin';
+import { UserAndRoleMixin } from '../Balance/Mixins/UserAndRoleMixin';
 
-    import * as actions from '../../../Config/ApiUrl';
+import * as actions from '../../../Config/ApiUrl';
 
 
-    export default {
-        name: "Referidos",
-        extends: AppLibrary,
-        mixins: [UserAndRoleMixin],
-        components: {
-            UserModal,
-            UserInvitationModal,
-            RolesAddEditModal,
-            User,
-            ManageUsersModal,
-            Role
-        },
-        data() {
-            return {
-                deleteLoader: false,
-                rowData: {},
-                selectedUrl: '',
-                manage: false,
-                confirmation: {
-                    modalId: 'confirmation-Modal',
-                    isActive: false,
-                    url: '',
-                    tableId: '',
-                }
+export default {
+    name: "Referidos",
+    extends: AppLibrary,
+    mixins: [UserAndRoleMixin],
+    components: {
+        UserModal,
+        UserInvitationModal,
+        RolesAddEditModal,
+        User,
+        ManageUsersModal,
+        Role
+    },
+    data() {
+        return {
+            deleteLoader: false,
+            rowData: {},
+            selectedUrl: '',
+            manage: false,
+            confirmation: {
+                modalId: 'confirmation-Modal',
+                isActive: false,
+                url: '',
+                tableId: '',
+            },
+            referralLink: ''
+        }
+    },
+    created() {
+        this.$store.dispatch('getPermissions');
+    },
+    async mounted() {
+        await this.fetchEncryptedId();
+    },
+    methods: {
+        /* *
+         * $EMIT FROM USER TABLE
+         * */
+
+        async fetchEncryptedId() {
+            try {
+                const response = await axios.get('encrypted-id');
+                this.referralLink = response.data.encrypted_id;
+            } catch (error) {
+                console.error('Error fetching referral code:', error);
             }
         },
-        created() {
-            this.$store.dispatch('getPermissions');
+        getActionUser(rowData, actionObj, active) {
+
+            this.$store.dispatch('setRowData', rowData);
+
+            if (actionObj.title == this.$t('manage_role')) {
+
+                this.selectedUrl = `${actions.INVITE_USER}/${rowData.id}`;
+                this.operationForUserInvitation();
+
+            } else if (actionObj.title == this.$t('delete')) {
+
+                this.confirmation.url = `${actions.USERS}/${rowData.id}`;
+                this.confirmation.tableId = this.userAndRoles.users.tableId;
+                this.openConfirmationModal();
+
+            } else if (actionObj.title == this.$t('edit')) {
+                this.selectedUrl = `${actions.UPDATE_USER_NAME}/${rowData.id}`;
+                this.openUserModal();
+
+            } else if (actionObj.title == this.$t('active')) {
+
+                this.changeUserStatus(1, rowData.id);
+
+            } else if (actionObj.title == this.$t('de_activate')) {
+
+                this.changeUserStatus(2, rowData.id);
+            }
         },
-        methods: {
-            /* *
-             * $EMIT FROM USER TABLE
-             * */
-            getActionUser(rowData, actionObj, active) {
 
-                this.$store.dispatch('setRowData', rowData);
+        copyToClipboard() {
+           
+            navigator.clipboard.writeText('https://darkorchid-okapi-696445.hostingersite.com/public/user/registration?referral_code=' + this.referralLink)
+                .then(() => {
+                    this.$toastr.s(this.$t('link_copied'));
+                })
+                .catch(err => {
+                    this.$toastr.e(this.$t('error_copying_link'));
+                });
+        },
 
-                if (actionObj.title == this.$t('manage_role')) {
+        /* *
+         * $EMIT FROM ROLE TABLE
+         * */
+        getActionRole(rowData, actionObj, active) {
+            this.$store.dispatch('setRowData', rowData);
+            this.manage = false;
+            if (actionObj.title == this.$t('edit')) {
 
-                    this.selectedUrl = `${actions.INVITE_USER}/${rowData.id}`;
-                    this.operationForUserInvitation();
+                this.selectedUrl = `${actions.ROLES}/${rowData.id}`;
+                this.operateRoles(true);
 
-                } else if (actionObj.title == this.$t('delete')) {
+            } else if (actionObj.title == this.$t('delete')) {
 
-                    this.confirmation.url = `${actions.USERS}/${rowData.id}`;
-                    this.confirmation.tableId = this.userAndRoles.users.tableId;
-                    this.openConfirmationModal();
+                this.confirmation.url = `${actions.ROLES}/${rowData.id}`;
+                this.confirmation.tableId = this.userAndRoles.roles.tableId;
+                this.openConfirmationModal();
 
-                } else if(actionObj.title == this.$t('edit')) {
-                    this.selectedUrl = `${actions.UPDATE_USER_NAME}/${rowData.id}`;
-                    this.openUserModal();
+            } else if (actionObj.title == this.$t('manage_users')) {
 
-                } else if (actionObj.title == this.$t('active')) {
-
-                    this.changeUserStatus(1, rowData.id);
-
-                } else if (actionObj.title == this.$t('de_activate')) {
-
-                    this.changeUserStatus(2, rowData.id);
-                }
-            },
-
-            /* *
-             * $EMIT FROM ROLE TABLE
-             * */
-            getActionRole(rowData, actionObj, active) {
-                this.$store.dispatch('setRowData', rowData);
-                this.manage = false;
-                if (actionObj.title == this.$t('edit')) {
-
+                this.operationForManageUser();
+            } else if (actionObj.title == this.$t('permission')) {
+                this.manage = true,
                     this.selectedUrl = `${actions.ROLES}/${rowData.id}`;
-                    this.operateRoles(true);
+                this.operateRoles(true, 'manage_permission')
+            }
+        },
 
-                } else if (actionObj.title == this.$t('delete')) {
+        /* *
+         * OPERATION FOR ROLES
+         * */
+        operateRoles(isActive, title = 'role') {
+            const obj = {
+                isActive: isActive,
+                title: title
+            };
+            this.$store.dispatch('operateRoles', obj);
+        },
 
-                    this.confirmation.url = `${actions.ROLES}/${rowData.id}`;
-                    this.confirmation.tableId = this.userAndRoles.roles.tableId;
-                    this.openConfirmationModal();
+        /* *
+         * CLOSE ROLE ADD EDIT MODAL
+         * */
+        closeModalRoleAddEditModal() {
+            $('#' + this.userAndRoles.roles.addEditModalId).modal('hide');
+            this.operateRoles(false);
+            this.resetData();
+        },
 
-                } else if (actionObj.title == this.$t('manage_users')) {
+        /* *
+         * OPEN MANAGE USER MODAL
+         * */
+        operationForManageUser(isActive = true) {
+            this.$store.dispatch('operationForManageUser', isActive);
+        },
 
-                    this.operationForManageUser();
-                } else if (actionObj.title == this.$t('permission')) {
-                    this.manage = true,
-                    this.selectedUrl = `${actions.ROLES}/${rowData.id}`;
-                    this.operateRoles(true, 'manage_permission')
-                }
-            },
+        closeManageUserModal() {
+            $('#' + this.userAndRoles.users.manageUserModalId).modal('hide');
+            this.operationForManageUser(false);
+            this.resetData();
+        },
 
-            /* *
-             * OPERATION FOR ROLES
-             * */
-            operateRoles(isActive, title='role'){
-                const obj = {
-                    isActive : isActive,
-                    title : title
-                };
-                this.$store.dispatch('operateRoles', obj);
-            },
+        /* *
+         * OPEN INVITE MODAL
+         * */
+        operationForUserInvitation(isActive = true) {
+            this.$store.dispatch('operationForUserInvitation', isActive);
+        },
 
-            /* *
-             * CLOSE ROLE ADD EDIT MODAL
-             * */
-            closeModalRoleAddEditModal() {
-                $('#' + this.userAndRoles.roles.addEditModalId).modal('hide');
-                this.operateRoles(false);
+        /**
+         * Open user modal
+         * */
+        openUserModal(isActive = true) {
+            this.$store.dispatch('openUserModal', isActive)
+        },
+        /**
+         * Close user modal
+         * */
+        closeUserModal() {
+            $('#' + this.userAndRoles.users.userModalId).modal('hide');
+            this.openUserModal(false);
+            this.resetData();
+        },
+
+        /**
+         * CLOSE INVITE MODAL
+         * */
+        closeInviteModal() {
+            $('#' + this.userAndRoles.users.inviteModalId).modal('hide');
+            this.operationForUserInvitation(false);
+            this.resetData();
+        },
+
+        /**
+         * Change user status
+         * */
+        changeUserStatus(status, id) {
+            let url = `${actions.USERS_LIST}/${id}`,
+                reqData = this.userAndRoles.rowData;
+
+            reqData.status_id = status;
+
+            this.axiosPatch({
+                url: url,
+                data: reqData
+            }).then(res => {
+                this.$toastr.s(res.data.message);
+                this.reLoadTable();
+
+            }).catch(error => {
+                let { message } = error.response.data;
+                this.$toastr.e(message);
+            }).finally(() => {
                 this.resetData();
-            },
+            });
+        },
 
-            /* *
-             * OPEN MANAGE USER MODAL
-             * */
-            operationForManageUser(isActive = true){
-                this.$store.dispatch('operationForManageUser', isActive);
-            },
+        /* *
+         * OPEN CONFIRMATION MODAL
+         * */
+        openConfirmationModal() {
+            this.confirmation.isActive = true;
+        },
 
-            closeManageUserModal() {
-                $('#' + this.userAndRoles.users.manageUserModalId).modal('hide');
-                this.operationForManageUser(false);
-                this.resetData();
-            },
-
-            /* *
-             * OPEN INVITE MODAL
-             * */
-            operationForUserInvitation(isActive=true){
-                this.$store.dispatch('operationForUserInvitation', isActive);
-            },
-
-            /**
-             * Open user modal
-             * */
-            openUserModal(isActive=true) {
-                this.$store.dispatch('openUserModal', isActive)
-            },
-            /**
-             * Close user modal
-             * */
-            closeUserModal() {
-                $('#' + this.userAndRoles.users.userModalId).modal('hide');
-                this.openUserModal(false);
-                this.resetData();
-            },
-
-            /**
-             * CLOSE INVITE MODAL
-             * */
-            closeInviteModal() {
-                $('#' + this.userAndRoles.users.inviteModalId).modal('hide');
-                this.operationForUserInvitation(false);
-                this.resetData();
-            },
-
-            /**
-             * Change user status
-             * */
-            changeUserStatus(status, id) {
-                let url = `${actions.USERS_LIST}/${id}`,
-                    reqData = this.userAndRoles.rowData;
-
-                reqData.status_id = status;
-
-                this.axiosPatch({
-                    url: url,
-                    data: reqData
-                }).then(res => {
+        /* *
+         * AFTER CONFIRMED FROM CONFIRMATION MODAL
+         * */
+        confirmed() {
+            let url = this.confirmation.url;
+            this.deleteLoader = true;
+            this.axiosDelete(url)
+                .then(res => {
                     this.$toastr.s(res.data.message);
-                    this.reLoadTable();
-
                 }).catch(error => {
-                    let {message} = error.response.data;
+                    let { message } = error.response.data;
                     this.$toastr.e(message);
                 }).finally(() => {
-                    this.resetData();
+                    this.deleteLoader = false;
+                    $("#" + this.confirmation.modalId).modal('hide');
+                    this.cancelled();
+                    this.reLoadTable();
                 });
-            },
 
-            /* *
-             * OPEN CONFIRMATION MODAL
-             * */
-            openConfirmationModal() {
-                this.confirmation.isActive = true;
-            },
+        },
 
-            /* *
-             * AFTER CONFIRMED FROM CONFIRMATION MODAL
-             * */
-            confirmed() {
-                let url = this.confirmation.url;
-                this.deleteLoader=true;
-                this.axiosDelete(url)
-                    .then(res => {
-                        this.$toastr.s(res.data.message);
-                    }).catch(error => {
-                        let {message} = error.response.data;
-                        this.$toastr.e(message);
-                    }).finally(() => {
-                        this.deleteLoader= false;
-                        $("#"+this.confirmation.modalId).modal('hide');
-                        this.cancelled();
-                        this.reLoadTable();
-                    });
+        /* *
+         * AFTER CANCELLED FROM CONFIRMATION MODAL
+         * */
+        cancelled() {
+            this.confirmation.isActive = false;
+            this.resetData();
+        },
 
-            },
-
-            /* *
-             * AFTER CANCELLED FROM CONFIRMATION MODAL
-             * */
-            cancelled() {
-                this.confirmation.isActive = false;
-                this.resetData();
-            },
-
-            /* *
-             * RESET DATA
-             * */
-            resetData() {
-                this.$store.dispatch('setRowData', {});
-                this.selectedUrl = '';
-            },
-        }
+        /* *
+         * RESET DATA
+         * */
+        resetData() {
+            this.$store.dispatch('setRowData', {});
+            this.selectedUrl = '';
+        },
     }
+}
 </script>

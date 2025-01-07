@@ -37,6 +37,9 @@ Route::post('edit/transaction/{id}', [TransactionController::class, 'editTransac
 Route::patch('edit/transaction2/{id}', [TransactionController::class, 'editTransaction2'])->name('transaction.editTransaction2');
 Route::get('account/transaction', [TransactionController::class, 'account'])->name('transaction.accountTransaction');
 Route::view('/transacciones', 'balance.balance')->name('balance.balance');
+Route::view('/depositos', 'deposito.deposito')->name('deposito.deposito');
+Route::view('/retiros', 'retiro.retiro')->name('retiro.retiro');
+
 Route::view('/transacciones/admin', 'balance.admin')->name('balance.admin');
 Route::view('/user/referidos', 'refered.index')->name('userRefered.index');
 Route::post('/payment-methods', [PaymentMethodController::class, 'store'])->name('payment.accountTransaction');

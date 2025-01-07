@@ -322,10 +322,25 @@ class SidebarComposer
                 'url' => request()->root() . '/users-and-roles',
                 'permission' => authorize_any(['view_users', 'view_roles', 'invite_user', 'create_roles']),
             ],
+            
             [
                 'icon' => 'user-check',
                 'name' => 'Transacciones',
                 'url' => request()->root() . '/transacciones',
+                'permission' => authorize_any(['view_default']),
+
+            ],
+            [
+                'icon' => 'user-check',
+                'name' => 'Depósitos',
+                'url' => request()->root() . '/depositos',
+                'permission' => authorize_any(['view_default']),
+
+            ],
+            [
+                'icon' => 'user-check',
+                'name' => 'Retiros',
+                'url' => request()->root() . '/retiros',
                 'permission' => authorize_any(['view_default']),
 
             ],

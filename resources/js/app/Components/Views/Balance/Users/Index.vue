@@ -62,12 +62,30 @@
                             }
                         },
                         {
+                            title: 'folio',
+                            type: 'text',
+                            key: 'folio',
+                            isVisible: true,
+                            modifier: (value, row) => {
+                                return `${row.folio}`;
+                            }
+                        },
+                        {
                             title: 'status',
                             type: 'text',
                             key: 'status',
                             isVisible: true,
                             modifier: (value, row) => {
                                 return `${row.status}`;
+                            }
+                        },
+                        {
+                            title: 'created_at',
+                            type: 'text',
+                            key: 'created_at',
+                            isVisible: true,
+                            modifier: (value, row) => {
+                                return `${row.created_at}`;
                             }
                         },
                         {
@@ -90,30 +108,7 @@
                             title: this.$t('edit'),
                             type: 'none',
                         },
-                        {
-                            title: this.$t('delete'),
-                            type: 'none',
-                        },
-                        {
-                            title: this.$t('active'),
-                            type: 'none',
-                            modifier: (row) => {
-                                const {status} = row;
-                                return status.name != "status_invited" && status.name != "status_active" ? true : false;
-                            }
-                        },
-                        {
-                            title: this.$t('de_activate'),
-                            type: 'none',
-                            modifier: (row) => {
-                                const {status} = row;
-                                return status.name != "status_invited" && status.name != "status_inactive" ? true :false;
-                            }
-                        },
-                        {
-                            title: this.$t('manage_role'),
-                            type: 'none',
-                        },
+                        
                     ],
                 },
             }

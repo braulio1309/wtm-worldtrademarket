@@ -7,6 +7,7 @@ import './Components/Helpers/HelperComponent';
  * all component of GUD
  */
 Vue.component('personal-information', require('./Components/Views/Auth/PersonalInformation').default);
+
 Vue.component('metodo-retiro', require('./Components/Views/Auth/MetodoRetiro').default);
 Vue.component('password-change', require('./Components/Views/Auth/PasswordChange').default);
 Vue.component('social-links', require('./Components/Views/Auth/SocialLinks').default);
@@ -55,5 +56,7 @@ Vue.component('app-custom-table-dynamic', require('./Components/Views/Demo/Custo
 //Balance
 Vue.component('balance', require('./Components/Views/Balance/Index').default);
 Vue.component('admin', require('./Components/Views/BalanceAdmin/Index').default);
+Vue.component('deposito', require('./Components/Views/Depositos/Index').default);
+Vue.component('retiro', require('./Components/Views/Retiros/Index').default);
 
 
