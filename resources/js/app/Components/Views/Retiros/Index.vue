@@ -35,13 +35,12 @@
         <!-- Monto -->
         <div class="mb-3">
           <label for="amount" class="form-label">Monto</label>
-          <input 
-            v-model="formData.amount" 
-            id="amount" 
-            type="number" 
-            class="form-control" 
-            placeholder="Ingrese el monto"
-          />
+          <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">USD</span>
+              </div>
+              <input type="number" id="deposit-amount" class="form-control" v-model.number="formData.amount" placeholder="Ingrese el monto" />
+            </div>
         </div>
 
         <!-- Aceptar Políticas -->
