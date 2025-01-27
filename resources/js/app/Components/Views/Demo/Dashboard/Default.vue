@@ -26,7 +26,7 @@
                     <div class="card card-with-shadow border-0 h-100" v-if="audienceChart">
                         <div
                             class="card-header bg-transparent p-primary d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">Historico de depositos y retiros</h5>
+                            <h5 class="card-title mb-0">Crecimiento de tu cuenta</h5>
                             <ul class="nav tab-filter-menu justify-content-flex-end">
                                 <li class="nav-item"
                                     v-for="(item, index) in info.audienceOverviewChart.chartFilterOptions" :key="index">
@@ -89,7 +89,7 @@
                     </div>
                 </div>
 
-                
+
             </div>
         </div>
     </div>
@@ -133,29 +133,35 @@ export default {
     },
     methods: {
         formatTimeAgo(date) {
-            console.log(date)
-            const now = new Date();
-            const diffInSeconds = Math.floor((now - new Date(date)) / 1000); // Diferencia en segundos
-            const diffInMinutes = Math.floor(diffInSeconds / 60); // Diferencia en minutos
-            const diffInHours = Math.floor(diffInMinutes / 60); // Diferencia en horas
-            const diffInDays = Math.floor(diffInHours / 24); // Diferencia en días
-            const diffInMonths = Math.floor(diffInDays / 30); // Aproximación a meses
-            const diffInYears = Math.floor(diffInMonths / 12); // Aproximación a años
+            if(date){
+                console.log(date)
+                // Aseguramos que el formato de la fecha sea compatible con el constructor Date
+                const formattedDate = date.replace(" ", "T"); // Cambia el espacio por "T"
+                const now = new Date();
+                const diffInSeconds = Math.floor((now - new Date(formattedDate)) / 1000); // Diferencia en segundos
+                const diffInMinutes = Math.floor(diffInSeconds / 60); // Diferencia en minutos
+                const diffInHours = Math.floor(diffInMinutes / 60); // Diferencia en horas
+                const diffInDays = Math.floor(diffInHours / 24); // Diferencia en días
+                const diffInMonths = Math.floor(diffInDays / 30); // Aproximación a meses
+                const diffInYears = Math.floor(diffInMonths / 12); // Aproximación a años
 
-            if (diffInYears > 0) {
-                return `hace ${diffInYears} ${diffInYears === 1 ? 'año' : 'años'}`;
-            } else if (diffInMonths > 0) {
-                return `hace ${diffInMonths} ${diffInMonths === 1 ? 'mes' : 'meses'}`;
-            } else if (diffInDays > 0) {
-                return `hace ${diffInDays} ${diffInDays === 1 ? 'día' : 'días'}`;
-            } else if (diffInHours > 0) {
-                return `hace ${diffInHours} ${diffInHours === 1 ? 'hora' : 'horas'}`;
-            } else if (diffInMinutes > 0) {
-                return `hace ${diffInMinutes} ${diffInMinutes === 1 ? 'minuto' : 'minutos'}`;
-            } else {
-                return `hace ${diffInSeconds} ${diffInSeconds === 1 ? 'segundo' : 'segundos'}`;
+                if (diffInYears > 0) {
+                    return `hace ${diffInYears} ${diffInYears === 1 ? 'año' : 'años'}`;
+                } else if (diffInMonths > 0) {
+                    return `hace ${diffInMonths} ${diffInMonths === 1 ? 'mes' : 'meses'}`;
+                } else if (diffInDays > 0) {
+                    return `hace ${diffInDays} ${diffInDays === 1 ? 'día' : 'días'}`;
+                } else if (diffInHours > 0) {
+                    return `hace ${diffInHours} ${diffInHours === 1 ? 'hora' : 'horas'}`;
+                } else if (diffInMinutes > 0) {
+                    return `hace ${diffInMinutes} ${diffInMinutes === 1 ? 'minuto' : 'minutos'}`;
+                } else {
+                    return `hace ${diffInSeconds} ${diffInSeconds === 1 ? 'segundo' : 'segundos'}`;
+                }
             }
+            
         },
+
         audienceOverviewCartFilterValue(item) {
             this.audienceFilter = item;
             this.audienceChart = false;

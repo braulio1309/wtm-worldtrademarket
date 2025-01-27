@@ -9,6 +9,21 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-lg-3 col-xl-3 d-flex align-items-center">
+                        <label for="active_method" class="text-left d-block mb-lg-2 mb-xl-0">
+                            Selecciona tu método de retiro
+                        </label>
+                    </div>
+                    <div class="col-lg-8 col-xl-8">
+                        <select id="active_method" v-model="paymentMethod.active_method" class="form-control">
+                            <option value="usdt">Wallet - Only USDT TRC20</option>
+                            <option value="bank_account">Cuenta bancaria</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" v-if="paymentMethod.active_method == 'usdt'">
+                <div class="row">
+                    <div class="col-lg-3 col-xl-3 d-flex align-items-center">
                         <label for="wallet" class="text-left d-block mb-lg-2 mb-xl-0">
                             Wallet
                         </label>
@@ -20,7 +35,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" v-if="paymentMethod.active_method == 'bank_account'">
                 <div class="row">
                     <div class="col-lg-3 col-xl-3">
                         <label for="bank" class="text-left d-block mb-lg-2 mb-xl-0">
@@ -34,7 +49,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" v-if="paymentMethod.active_method == 'bank_account'">
                 <div class="row">
                     <div class="col-lg-3 col-xl-3 d-flex align-items-center">
                         <label for="interbank_key" class="text-left d-block mb-lg-2 mb-xl-0">
@@ -48,22 +63,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-lg-3 col-xl-3 d-flex align-items-center">
-                        <label for="active_method" class="text-left d-block mb-lg-2 mb-xl-0">
-                            Selecciona tu método de retiro
-                        </label>
-                    </div>
-                    <div class="col-lg-8 col-xl-8">
-                        <select id="active_method" v-model="paymentMethod.active_method" class="form-control">
-                            <option >Elige una opcion</option>
-                            <option value="usdt">USDT wallet</option>
-                            <option value="bank_account">Cuenta bancaria</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+            
             <div class="form-group mb-0 mt-5">
                 <div class="row">
                     <div class="col-12 action-buttons">

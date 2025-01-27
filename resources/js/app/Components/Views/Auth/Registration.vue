@@ -59,18 +59,7 @@
 
                         </div>
                         <div class="card card-with-shadow border-0 mb-primary">
-                            <div class="card-header p-primary bg-transparent">
-                                <h5 class="card-title m-0">Cargue su documento de identidad</h5>
-                            </div>
-                            <app-overlay-loader v-if="preloader" />
-                            <div class="form-group mb-primary row align-items-center">
-                                <div class="col-sm-12 default-file">
-                                    <input type="file" @change="handleFileChange" :label="'Cargue su archivo'" />
-                                    <small class="text-muted font-italic">
-                                        {{ $t('recommended_default_file_validation') }}
-                                    </small>
-                                </div>
-                            </div>
+                           
                             <label for="referral_code">Código de referido</label>
                             <input
                                 type="text"
@@ -150,9 +139,7 @@ export default {
     },
 
     methods: {
-        handleFileChange(event) {
-            this.user.document = event.target.files[0]; // Obtener el archivo seleccionado
-        },
+       
         submit() {
             const formData = new FormData();
 

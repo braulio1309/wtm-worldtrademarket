@@ -66,6 +66,10 @@
                 <th>Moneda</th>
                 <td>USD</td>
               </tr>
+              <tr v-if="form.method == 'SPEI'">
+                <th>Tasa de cambio</th>
+                <td> 20.58 MXM</td>
+              </tr>
               <tr>
                 <th>Moneda de depósito</th>
                 <td>USD</td>

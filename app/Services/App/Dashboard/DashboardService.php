@@ -31,8 +31,8 @@ class DashboardService extends AppService
         $saldo = $account->balance;
         $bonus = Transaction::where('type', 'bonus')->sum('amount');
         $top_section_data = [
-            ['label' => 'Saldo actual', 'number' => $saldo, 'icon' => 'trello'],
-            ['label' => 'Ganado en bonus', 'number' => $bonus, 'icon' => 'sidebar'],
+            ['label' => 'Saldo actual por Balance', 'number' => $saldo, 'icon' => 'trello'],
+            ['label' => 'Ganado en bonus por Comisiónes', 'number' => $bonus, 'icon' => 'sidebar'],
             
         ];
 
