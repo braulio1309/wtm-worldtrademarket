@@ -8,7 +8,7 @@
             <app-overlay-loader v-if="preloader"/>
             <form class="mb-0"
                   :class="{'loading-opacity': preloader}"
-                  ref="form" :data-url='`/admin/edit/transaction/${inputs.id}`'>
+                  ref="form" :data-url='`/edit/transaction/${inputs.id}`'>
                 <div class="form-group row align-items-center">
                     <label for="inputs_name" class="col-sm-3 mb-0">
                         ID usuario

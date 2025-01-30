@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <div class="card shadow p-4">
-      <h3 class="text-center mb-4">Formulario de Retiros</h3>
+      <h3 class="text-center mb-4">Retiro</h3>
       <form @submit.prevent="showConfirmationModal">
         <!-- Método de Retiro -->
         <div class="mb-3">
@@ -27,7 +27,6 @@
             class="form-select"
           >
             <option value="" disabled>Seleccione un canal</option>
-            <option value="USDT-ERC20">USDT-ERC20</option>
             <option value="USDT-TRC20">USDT-TRC20</option>
           </select>
         </div>

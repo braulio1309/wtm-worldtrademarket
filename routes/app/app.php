@@ -38,6 +38,8 @@ Route::patch('edit/transaction2/{id}', [TransactionController::class, 'editTrans
 Route::get('account/transaction', [TransactionController::class, 'account'])->name('transaction.accountTransaction');
 Route::view('/transacciones', 'balance.balance')->name('balance.balance');
 Route::view('/depositos', 'deposito.deposito')->name('deposito.deposito');
+Route::view('/deposit/confirmation', 'deposit.confirmation')->name('deposit.confirmation');
+
 Route::view('/retiros', 'retiro.retiro')->name('retiro.retiro');
 
 Route::view('/transacciones/admin', 'balance.admin')->name('balance.admin');

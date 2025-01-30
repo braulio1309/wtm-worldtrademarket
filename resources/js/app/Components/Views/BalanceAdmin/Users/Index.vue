@@ -119,7 +119,7 @@ export default {
             });
         },
         update(row, value) {
-            let url = `admin/transaction/edit`;
+            let url = `transaction/edit`;
             let data = {
                 accountId: row.accountId,
                 status: value

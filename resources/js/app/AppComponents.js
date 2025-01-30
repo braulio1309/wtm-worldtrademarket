@@ -58,5 +58,6 @@ Vue.component('balance', require('./Components/Views/Balance/Index').default);
 Vue.component('admin', require('./Components/Views/BalanceAdmin/Index').default);
 Vue.component('deposito', require('./Components/Views/Depositos/Index').default);
 Vue.component('retiro', require('./Components/Views/Retiros/Index').default);
+Vue.component('confirmation', require('./Components/Views/Confirmation/Index').default);
 
 

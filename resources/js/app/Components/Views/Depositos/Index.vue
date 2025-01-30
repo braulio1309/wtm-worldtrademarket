@@ -45,7 +45,8 @@
               <div class="input-group-prepend">
                 <span class="input-group-text">USD</span>
               </div>
-              <input type="number" id="deposit-amount" class="form-control" v-model.number="form.amount" placeholder="Ingrese el monto" />
+              <input type="number" id="deposit-amount" class="form-control" v-model.number="form.amount"
+                placeholder="Ingrese el monto" />
             </div>
           </div>
 
@@ -110,35 +111,74 @@
 
           <!-- Mensaje de éxito -->
           <div v-if="isSuccessVisible" class="alert alert-success mt-3">
-            ¡Depósito realizado con éxito!
+            ¡Orden generada con éxito!
           </div>
 
           <!-- Modal de Depósito con los detalles -->
-          <div v-if="isModalVisible" class="modal fade show d-block" tabindex="-1" style="background: rgba(0, 0, 0, 0.7)">
-            <div class="modal-dialog modal-lg">
+          <div v-if="isModalVisible" class="modal fade show d-block deposit-confirmation" tabindex="-1"
+            style="background: rgba(0, 0, 0, 0.7)">
+            <div class="modal-dialog modal-lg card">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title">Ficha de Depósito</h5>
                   <button type="button" class="btn-close" @click="closeDepositModal"></button>
                 </div>
                 <div class="modal-body text-center">
+                  <!-- Información SPEI -->
                   <h5 v-if="form.method === 'SPEI'">Información Bancaria</h5>
                   <div v-if="form.method === 'SPEI'">
-                    <p><strong>CLABE:</strong> 646682177602616125</p>
-                    <p><strong>Banco:</strong> STP</p>
-                    <p><strong>Beneficiario:</strong> Unlimit</p>
-                    <p><strong>Importe:</strong> {{ calculateConversion(form.amount) }} MXN</p>
+                    <table class="table table-bordered">
+                      <tbody>
+                        <tr>
+                          <th>CLABE:</th>
+                          <td>{{ clabe }}</td>
+                        </tr>
+                        <tr>
+                          <th>Banco</th>
+                          <td>STP</td>
+                        </tr>
+                        <tr>
+                          <th>Beneficiario</th>
+                          <td>Unlimit</td>
+                        </tr>
+                        <tr>
+                          <th>Importe:</th>
+                          <td>{{ calculateConversion(form.amount) }} MXN</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <button class="btn btn-sm btn-outline-primary" @click="copyToClipboard(clabe)">
+                      Copiar clabe
+                    </button>
+
+
                   </div>
+
+                  <!-- Información Crypto -->
                   <h5 v-if="form.method === 'Crypto'">Dirección de Depósito</h5>
                   <div v-if="form.method === 'Crypto'">
-                    <img :src="qrImage" alt="QR Code" class="img-fluid" />
-                    <p><strong>Red:</strong> Tron (TRC20)</p>
-                    <p><strong>Dirección:</strong> TLXLzGVK2X2oFYQBSxPcqAxiJakmB6TCve</p>
+                    <img :src="qrImage" alt="QR Code" class="img-fluid" width="25%" height="25%" />
+                    <table class="table table-bordered" style="margin-top: 20px;">
+                      <tbody>
+                        <tr>
+                          <th>Red:</th>
+                          <td>Tron (TRC20)</td>
+                        </tr>
+                        <tr>
+                          <th>Dirección</th>
+                          <td>{{ wallet }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <button class="btn btn-sm btn-outline-primary" @click="copyToClipboard(wallet)">
+                      Copiar Wallet
+                    </button>
                   </div>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" @click="closeDepositModal">Cerrar</button>
-                  <button type="button" class="btn btn-success" @click="reloadPage">Aceptar</button>
+                  <button type="button" class="btn btn-success" @click="goToDepositView">Abrir en otra ventana</button>
                 </div>
               </div>
             </div>
@@ -160,10 +200,12 @@ export default {
         method: "",
         amount: null,
       },
+      clabe: "646682177602616125",
+      wallet: "TLXLzGVK2X2oFYQBSxPcqAxiJakmB6TCve",
       acceptedPolicies: false,
       isSuccessVisible: false,
       convertedAmount: 0,
-      qrImage: "https://darkorchid-okapi-696445.hostingersite.com/storage/app/public/uploads/qr.jpg", 
+      qrImage: "https://darkorchid-okapi-696445.hostingersite.com/storage/app/uploads/qr.jpg",
       isModalVisible: false,
     };
   },
@@ -212,6 +254,31 @@ export default {
     reloadPage() {
       window.location.reload();
     },
+    copyToClipboard(value) {
+      const textarea = document.createElement("textarea");
+      textarea.value = value;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy"); // Método compatible con más navegadores
+      document.body.removeChild(textarea);
+      alert("Copiado al portapapeles");
+    },
+    goToDepositView() {
+      const depositData = {
+        method: this.form.method,
+        amount: this.form.amount,
+        clabe: this.clabe,
+        wallet: this.wallet
+      };
+
+      // Redirigir a la vista en Laravel con los datos
+      window.open(`deposit/confirmation?method=${this.form.method}&amount=${this.form.amount}`, '_blank');
+
+
+    },
+    closeDepositModal() {
+      this.isModalVisible = false;
+    }
   },
 };
 </script>
@@ -226,7 +293,8 @@ export default {
 }
 
 .modal-dialog.modal-lg {
-  max-width: 90%; /* Hace que el modal sea más grande */
+  max-width: 90%;
+  /* Hace que el modal sea más grande */
 }
 
 .modal-header {
@@ -241,4 +309,19 @@ export default {
 .alert-success {
   text-align: center;
 }
+
+.deposit-confirmation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+
+.btn {
+    margin-top: 10px;
+}
 </style>
+
+
