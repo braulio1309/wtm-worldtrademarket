@@ -14,6 +14,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('dashboard.default');
+
+        return view('dashboard.default', ['name' => auth()->user()->first_name, 'date' => auth()->user()->created_at->format('Y-m-d H:i:s')]);
     }
 }

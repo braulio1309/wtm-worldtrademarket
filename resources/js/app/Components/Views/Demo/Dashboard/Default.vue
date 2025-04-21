@@ -1,5 +1,5 @@
 <template>
-    <div class="position-relative">
+    <div class="position-relative" v-if="!mainPreloader">
         <div v-if="countCreatedResponse < 3" class="root-preloader position-absolute overlay-loader-wrapper">
             <div class="spinner-bounce d-flex align-items-center dashboard-preloader justify-content-center">
                 <span class="bounce1 mr-1" />

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -54,27 +52,18 @@
 
         <div class="content">
             <!-- Contenido aquí -->
-            <h2>Hola, Administrador</h2>
-            <p>Han solicitado un retiro:</p>
+            Ha realizado un deposito, actualmente está siendo procesado y se le notifcará en lo que esté aprobado
             <ul>
-                <li>Email: {{ $data['email'] }}</li>
                 <li>Folio: {{ $data['folio'] }}</li>
                 <li>Monto: {{ $data['amount'] }}</li>
-                <li>Metodo de retiro: {{ $data['paymentMethod'] }}</li>
-                @if($data['paymentMethod'] == 'usdt')
-                    <li>Wallet: {{ $data['wallet'] }}</li>
-                @else
-                    <li>Banco: {{ $data['bank'] }}</li>
-                    <li>Clave interbancaria: {{ $data['interbank_key'] }}</li>
-                @endif
+                <li>Fecha: {{ $data['fecha'] }}</li>
             </ul>
-                    
+            
         </div>
 
         <div class="footer">
-            Este mensaje es automatico por el sistema de wtm
+            Este mensaje fue enviado automáticamente desde NeoTech.
         </div>
     </div>
 </body>
 </html>
-

@@ -19,8 +19,15 @@ class SettingsApiController extends Controller
     {
         $users = User::select('id', 'email')->get();
         $setting = Setting::where('name', '=', 'users')->first();
-        $ids = explode(',', $setting->value);
+        $ids = ($setting) ? explode(',', $setting->value): [];
         $selected =  User::select('id', 'email')->whereIn('id',$ids)->get();
+        $userComision = User::select('id', 'email', 'commission')->where('commission','>','0')->get();
+        $userComisionAgrupado = $userComision->groupBy('commission')->map(function ($usuarios, $comision) {
+            return [
+                'commission' => (float) $comision,
+                'user' => $usuarios->pluck('id')->toArray()
+            ];
+        })->values()->toArray();
         return [
             'time_format' => array_map(function ($format) {
                 return ['id' => $format, 'value' => trans('default.' . $format)];
@@ -62,7 +69,8 @@ class SettingsApiController extends Controller
             })->toArray(),
             'selected' => $selected->map(function ($user) {
                 return ['id' => $user->id, 'value' => $user->email];
-            })->toArray()
+            })->toArray(),
+            'userComision' => $userComisionAgrupado
         ];
     }
 

@@ -46,12 +46,15 @@
                 <span class="input-group-text">USD</span>
               </div>
               <input type="number" id="deposit-amount" class="form-control" v-model.number="form.amount"
-                placeholder="Ingrese el monto" />
+                placeholder="Ingrese el monto" min="100"/>
+            </div>
+            <div v-if="form.amount < 100" class="alert alert-warning" role="alert">
+              El monto minimo es de 100 USD
             </div>
           </div>
 
           <button class="btn btn-secondary mr-2" @click="prevStep">Atrás</button>
-          <button class="btn btn-primary" @click="SiguienteStep" :disabled="!form.amount">Siguiente</button>
+          <button class="btn btn-primary" @click="SiguienteStep" :disabled="form.amount < 100">Siguiente</button>
         </div>
 
         <!-- Step 3 -->
@@ -198,7 +201,7 @@ export default {
       step: 1,
       form: {
         method: "",
-        amount: null,
+        amount: 0,
       },
       clabe: "646682177602616125",
       wallet: "TLXLzGVK2X2oFYQBSxPcqAxiJakmB6TCve",

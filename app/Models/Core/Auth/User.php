@@ -20,12 +20,14 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Account;
 use App\Models\Referral;
 use App\Models\PaymentMethod;
-;
+use App\Models\Transaction;
 
 class User extends BaseUser implements HasLocalePreference
 {
     protected static $logAttributes = [
-        'first_name', 'last_name', 'email',
+        'first_name',
+        'last_name',
+        'email',
     ];
 
     use UserAttribute,
@@ -76,5 +78,17 @@ class User extends BaseUser implements HasLocalePreference
     public function paymentMethods()
     {
         return $this->hasMany(PaymentMethod::class)->orderBy('created_at', 'desc');
+    }
+
+    public function transactions()
+    {
+        return $this->hasManyThrough(
+            \App\Models\Transaction::class, // modelo final
+            \App\Models\Account::class,     // modelo intermedio
+            'userId',                      // Foreign key en accounts que referencia a users
+            'accountId',                   // Foreign key en transactions que referencia a accounts
+            'id',                           // Local key en users
+            'id'                            // Local key en accounts
+        );
     }
 }

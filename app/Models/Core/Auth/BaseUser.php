@@ -36,7 +36,8 @@ abstract class BaseUser extends Authenticatable
         'status_id',
         'invitation_token',
         'remember_token',
-        'document'
+        'document',
+        'document_verified'
     ];
 
     /**

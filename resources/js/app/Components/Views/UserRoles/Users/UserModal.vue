@@ -28,9 +28,15 @@
 
                     <!-- Mostrar PDF si es un documento PDF -->
                     <template v-if="inputs.document">
-                        <iframe :src="'https://darkorchid-okapi-696445.hostingersite.com/storage/app/public/' + inputs.document" width="100%"
+                        <iframe :src="'http://wtm-dashboard.test/storage/app/public/' + inputs.document" width="100%"
                             height="400px"></iframe>
                     </template>
+
+
+                    <input v-if='!inputs.document_verified' type='button' class="btn btn-success" @click="validateDocument(inputs.id)" value="Validar Documento">
+                    <div v-if="inputs.document_verified == 1" class="alert alert-success" role="alert">
+                        Documento validado con exito 
+                    </div>                    
                 </div>
             </form>
         </template>
@@ -40,6 +46,7 @@
 <script>
 import { FormMixin } from '../../../../../core/mixins/form/FormMixin.js';
 import { ModalMixin } from "../../../../Mixins/ModalMixin";
+import { axiosPost } from "../../../../Helpers/AxiosHelper";
 
 import { UserAndRoleMixin } from '../Mixins/UserAndRoleMixin';
 
@@ -64,6 +71,12 @@ export default {
             this.$toastr.s(response.data.message);
             this.reLoadTable();
         },
+        validateDocument(id) {
+            console.log('aaaaa')
+            axiosPost(`validate/document/${id}`).then(({data}) => {
+                alert("Documento validado correctamente.");
+            });
+        }
     },
 }
 </script>

@@ -8,6 +8,7 @@ use App\Http\Requests\Core\Setting\SettingRequest;
 use App\Notifications\Core\Settings\SettingsNotification;
 use App\Services\Core\Setting\SettingService;
 use Illuminate\Http\Response;
+use App\Models\Core\Auth\User;
 
 class SettingController extends Controller
 {
@@ -47,6 +48,32 @@ class SettingController extends Controller
      */
     public function update(SettingRequest $request)
     {
+
+        $comisiones = $request->input('comisiones');
+        $userSinComision = User::where('commission', '>', 0)->select('id')->get();
+        $data = json_decode($comisiones, true);
+        $usuariosEnComision = [];
+        // Ahora puedes acceder a los valores del array
+        foreach ($data as $item) {
+            $comision = $item['commission'];
+            $usuarios = $item['user'];
+            //Actualizar comisiones en cada usuario
+            foreach($usuarios as $id){
+                $user = User::where('id', $id)->first();
+                $user->commission = (float) $comision;
+                $user->update();
+                $usuariosEnComision[] += $id;
+            }
+        }
+
+        foreach ($userSinComision as $usuario) {
+            if (!in_array($usuario->id, $usuariosEnComision)) {
+                $user = User::where('id', $usuario->id)->first();
+                $user->commission = 0;
+                $user->update();
+            }
+        }
+
         $this->service->update();
 
         notify()

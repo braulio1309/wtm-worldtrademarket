@@ -10,7 +10,7 @@ class SidebarComposer
     public function compose(View $view)
     {
         $table = CustomTable::all();
-
+        
         $menu = [
             [
                 'icon' => 'pie-chart',
@@ -316,29 +316,32 @@ class SidebarComposer
                 'url' => request()->root() . '/payment-view',
                 'permission' => auth()->user()->can('view_payment_method'),
             ],*/
+           
             [
                 'icon' => 'user-check',
                 'name' => 'Usuarios y roles',
                 'url' => request()->root() . '/users-and-roles',
                 'permission' => authorize_any(['view_users', 'view_roles', 'invite_user', 'create_roles']),
             ],
-            
+            (Auth()->user()->roles[0]->name == 'App Admin')? []:
             [
-                'icon' => 'user-check',
+                'icon' => 'list',
                 'name' => 'Transacciones',
                 'url' => request()->root() . '/transacciones',
                 'permission' => authorize_any(['view_default']),
 
             ],
+            (Auth()->user()->roles[0]->name == 'App Admin')? []:
             [
-                'icon' => 'user-check',
+                'icon' => 'credit-card',
                 'name' => 'Depósitos',
                 'url' => request()->root() . '/depositos',
                 'permission' => authorize_any(['view_default']),
 
             ],
+            (Auth()->user()->roles[0]->name == 'App Admin')? []:
             [
-                'icon' => 'user-check',
+                'icon' => 'dollar-sign',
                 'name' => 'Retiros',
                 'url' => request()->root() . '/retiros',
                 'permission' => authorize_any(['view_default']),

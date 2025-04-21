@@ -82,24 +82,56 @@
 import { FormMixin } from "../../../../core/mixins/form/FormMixin";
 import GlobalHelperMixin from "../../../Mixins/global/GlobalHelperMixin";
 import { UserMixin } from "./Mixins/UserMixin";
-import PasswordWarning from "./PasswordWarning";
+import AppLibrary from "../../../Helpers/AppLibrary";
 import * as actions from "../../../Config/ApiUrl";
 import { urlGenerator } from "../../../Helpers/AxiosHelper";
 
 export default {
     name: "MetodoRetiro",
+    extends: AppLibrary,
     mixins: [FormMixin, UserMixin, GlobalHelperMixin],
-    components: {
-        PasswordWarning
-    },
 
     data() {
         return {
             preloader: false,
             authUser: {},
             errors: {},
-            paymentMethod: {}
+            paymentMethod: {
+                active_method: '',
+                wallet: '',
+                bank: '',
+                interbank_key: ''  
+            }
         }
+    },
+    mounted(){
+        let paymentMethodo = this.user.loggedInUser.payment_methods;
+        if(paymentMethodo){
+            if(paymentMethodo[paymentMethodo.length-1].type == 'usdt'){
+                this.paymentMethod.active_method = paymentMethodo[paymentMethodo.length-1].type
+                this.paymentMethod.wallet = paymentMethodo[paymentMethodo.length-1].wallet
+            }else{
+                let lastBankAccount = [...paymentMethodo].reverse().find(pm => pm.type === 'bank_account');
+                if(lastBankAccount){
+                    this.paymentMethod.active_method = lastBankAccount.type
+                    this.paymentMethod.bank = lastBankAccount.bank
+                    this.paymentMethod.interbank_key = lastBankAccount.interbank_key
+                }    
+            }
+            
+        }else {
+            let lastBankAccount = [...paymentMethodo].reverse().find(pm => pm.type === 'bank_account');
+            if (lastBankAccount) {
+                this.paymentMethod.active_method = lastBankAccount.type;
+                this.paymentMethod.bank = lastBankAccount.bank;
+                this.paymentMethod.interbank_key = lastBankAccount.interbank_key;
+            } else {
+                this.paymentMethod.active_method = '';
+                this.paymentMethod.bank = '';
+                this.paymentMethod.interbank_key = '';
+            }
+        }
+        console.log(this.user.loggedInUser)
     },
     methods: {
         beforeSubmit() {

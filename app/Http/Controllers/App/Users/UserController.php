@@ -143,4 +143,12 @@ class UserController extends Controller
 
         return updated_responses('user');
     }
+
+    public function updateValidateDocument($id){
+        $user = User::where('id', $id)->get();
+        $user = $user[0];
+        $user->document_verified = 1;
+        $user->save();
+        return updated_responses('user');
+    }
 }

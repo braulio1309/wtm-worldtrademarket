@@ -23,9 +23,19 @@ class UserUpdateController extends Controller
 
     public function update(Request $request)
     {
-        auth()->user()->update(
-            $request->only('first_name', 'last_name', 'email')
-        );
+        $filePath = null;
+        if ($request->hasFile('document')) {
+            $filePath = $request->file('document')->store('uploads', 'public');
+        }
+
+        $user = auth()->user(); // Obtiene el usuario autenticado
+
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->email = $request->email;
+        $user->document = $filePath;
+
+        $user->save(); // Guarda los cambios
 
         Profile::query()->updateOrCreate([
             'user_id' => auth()->id()

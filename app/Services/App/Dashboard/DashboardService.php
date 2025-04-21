@@ -185,6 +185,7 @@ class DashboardService extends AppService
             ->orderBy('date', 'asc')
             ->get();
 
+        dd($results);
         // Convertir a un arreglo si es necesario
         $formattedResults = $results->map(function ($item) {
             return [

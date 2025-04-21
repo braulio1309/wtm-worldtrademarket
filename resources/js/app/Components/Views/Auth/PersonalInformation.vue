@@ -7,7 +7,23 @@
         <form class="mb-0" v-else ref="form" data-url="admin/auth/users/change-settings"
             :class="{ 'loading-opacity': preloader }">
             <div class="form-group">
+                <div class="col-lg-3 col-xl-3 d-flex align-items-center">
+
+                    <div v-if="user.loggedInUser.document == null" class="alert alert-warning" role="alert">
+                        Cargue su documento de identidad para poder hacer transacciones con normalidad
+                    </div>
+
+                    <div v-if="user.loggedInUser.document != null && user.loggedInUser.document_verified == null" class="alert alert-warning" role="alert">
+                        Su documento está siendo validado 
+                    </div>
+
+                    <div v-if="user.loggedInUser.document != null && user.loggedInUser.document_verified == 1" class="alert alert-success" role="alert">
+                        Cuenta verificada
+                    </div>
+                </div>
                 <div class="row">
+
+
                     <div class="col-lg-3 col-xl-3 d-flex align-items-center">
                         <label for="user_first_name" class="text-left d-block mb-lg-2 mb-xl-0">
                             {{ $t('first_name') }}
@@ -81,7 +97,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group" v-if="user.loggedInUser.document">
+            <div class="form-group" v-if="user.loggedInUser.document == null">
                 <div class="card-header p-primary bg-transparent">
                     <h5 class="card-title m-0">Cargue su documento de identidad</h5>
                 </div>
@@ -154,27 +170,33 @@ export default {
             ],
         }
     },
+    mounted(){
+        console.log(this.user.loggedInUser)
+    },
     methods: {
         beforeSubmit() {
             this.scrollToTop(true);
             this.preloader = true;
         },
         handleFileChange(event) {
-            this.user.document = event.target.files[0]; // Obtener el archivo seleccionado
+            this.user.loggedInUser.document = event.target.files[0]; // Obtener el archivo seleccionado
         },
         submit() {
             const formData = new FormData();
             // Iterar sobre las propiedades del objeto user
             Object.keys(this.user.loggedInUser).forEach((key) => {
                 if (key === "document") {
-                    formData.append(key, this.user.document); // Adjuntar el archivo
-                } else {
-                    formData.append(key, this.user[key]); // Adjuntar otras propiedades
+                    formData.append(key, this.user.loggedInUser.document); // Adjuntar el archivo
+                }else if (key == 'date_of_birth'){
+                    formData.append(key, this.getDateFormatForBackend(this.user.loggedInUser.date_of_birth)); // Agregar el valor de la propiedad
+                } 
+                else {
+                    formData.append(key, this.user.loggedInUser[key]); // Adjuntar otras propiedades
                 }
             });
+            
+            console.log(this.user.loggedInUser, 'bbb')
 
-            if (formData.date_of_birth) formData.date_of_birth = this.getDateFormatForBackend(formData.date_of_birth);
-            else formData.date_of_birth = null;
             this.save(formData);
         },
         afterFinalResponse() {

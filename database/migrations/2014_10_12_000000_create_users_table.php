@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->unsignedBigInteger("created_by")->nullable();
             $table->foreignId('status_id')->constrained()->onDelete('cascade');
             $table->string('invitation_token')->nullable();
+            $table->integer('document_verified')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

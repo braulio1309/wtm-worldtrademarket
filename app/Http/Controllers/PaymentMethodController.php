@@ -20,16 +20,29 @@ class PaymentMethodController extends Controller
         // Obtener el usuario autenticado
         $user = auth()->user();
 
+        $lastActiveMethod = PaymentMethod::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->orderByDesc('updated_at') // o 'created_at', según tu lógica
+            ->first();
+
+        if ($lastActiveMethod) {
+            $lastActiveMethod->status = 'inactive';
+            $lastActiveMethod->save();
+        }
+        
         // Crear o actualizar el método de pago
-        $paymentMethod = PaymentMethod::updateOrCreate(
-            ['user_id' => $user->id, 'type' => $validated['active_method']],
+        $paymentMethod = PaymentMethod::Create(
             [
                 'status' => 'active',
                 'wallet' => $validated['wallet'] ?? null,
                 'bank' => $validated['bank'] ?? null,
                 'interbank_key' => $validated['interbank_key'] ?? null,
+                'user_id' => $user->id,
+                'type' => $validated['active_method']
             ]
         );
+
+        
 
         return created_responses('PaymentMethod');
     }

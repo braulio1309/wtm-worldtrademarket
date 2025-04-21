@@ -24,7 +24,7 @@ class UserDemoSeeder extends Seeder
                 'created_by' => 1
             ],
             [
-                'name' => 'Moderator',
+                'name' => 'Afiliado',
                 'type_id' => 1,
                 'created_by' => 1
             ],

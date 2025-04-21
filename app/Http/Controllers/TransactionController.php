@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GeneralException;
 use App\Filters\Common\Auth\TransactionFilter as AppUserFilter;
 use App\Filters\Core\TransactionFilter;
-use App\Filters\Core\UserFilter;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Core\Auth\Transaction\UserRequest;
 use App\Models\Account;
 use App\Models\Referral;
 
 use App\Models\Transaction;
-use App\Notifications\Core\Transaction\UserNotification;
 use App\Services\Core\Auth\TransactionService;
-use App\Services\Core\Auth\UserService;
 
 use Illuminate\Http\Request;
-use App\Mail\Core\User\UserVerificationMail;
 use App\Mail\WithdrawalMail;
+use App\Mail\DepositoMail;
+use App\Mail\DepositoProcesadoMail;
+use App\Mail\RetiroProcesadoMail;
+use App\Mail\RetiroMail;
+
 use Illuminate\Support\Facades\Mail;
-use App\Mail\WithdrawalMailMail;
 use App\Models\Core\Auth\User;
+
+use Carbon\Carbon;
+
 
 /**
  * Class TransactionController.
@@ -83,7 +84,7 @@ class TransactionController extends Controller
     public function comisiones($id)
     {
         $user = User::where('id', $id)->with('account')->first();
-        
+
         $account = $user->account;
         return (new AppUserFilter(
             $this->service
@@ -100,6 +101,22 @@ class TransactionController extends Controller
     public function createTransaction(Request $request)
     {
 
+        if ($request->input('type') == 'withdrawal') {
+            $firstTransaction = auth()->user()->transactions()->orderBy('created_at', 'asc')->first();
+            $oneYearPassed = $firstTransaction && Carbon::parse($firstTransaction->created_at)->addYear()->lte(now());
+            $capitalInversion = $firstTransaction?->amount ?? 0;
+            $disponible = auth()->user()->wallet;
+            $retiro = $request->input('amount');
+
+            $retiroValido = $retiro <= ($disponible - $capitalInversion);
+            if (false) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El monto a retirar excede el disponible después de restar el capital de inversión.'
+                ], 403);
+            }
+        }
+
         $identifier = $this->generateUniqueIdentifier();
 
         Transaction::create([
@@ -110,8 +127,12 @@ class TransactionController extends Controller
             'folio' => $identifier
         ]);
 
+
+
         if ($request->input('type') == 'withdrawal') {
+
             $payment = Auth()->user()->paymentMethods[0];
+
             $data = [
                 'name' => Auth()->user()->first_name,
                 'email' => Auth()->user()->email,
@@ -122,11 +143,28 @@ class TransactionController extends Controller
                 'wallet' => $payment->wallet,
                 'bank' => $payment->bank,
                 'interbank_key' => $payment->interbank_key,
-
+                'fecha' => now(),
             ];
-            Mail::to('brauliozapatad@gmail.com')
+
+            Mail::to('braulioza@gmail.com')
                 ->send(new WithdrawalMail($data));
+            Mail::to(Auth()->user()->email)
+                ->send(new DepositoMail($data));
+        } else {
+            $data = [
+                'name' => Auth()->user()->first_name,
+                'email' => Auth()->user()->email,
+                //'message' => $request->input('description'),
+                'amount' => $request->input('amount'),
+                'folio' => $identifier,
+                'fecha' => now(),
+                
+            ];
+            Mail::to(Auth()->user()->email)
+                ->send(new DepositoMail($data));
         }
+
+
 
         return created_responses('Transaction');
     }
@@ -138,6 +176,14 @@ class TransactionController extends Controller
         $amount = $transaction->amount;
         $amount = ($transaction->type == 'deposit') ? $amount : $amount * -1;
 
+        $data = [
+            'name' => Auth()->user()->first_name,
+            'email' => Auth()->user()->email,
+            'amount' => $request->input('amount'),
+            'folio' => $transaction->folio,
+            'fecha' => $transaction->created_at
+        ];
+
         if ($request->input('status') == 'approved') {
             $account = Account::where('id', $transaction->accountId)->first();
             $account->balance += $amount;
@@ -166,6 +212,15 @@ class TransactionController extends Controller
             }
         }
 
+        if ($transaction->type == 'deposit') {
+
+            Mail::to(Auth()->user()->email)
+                ->send(new DepositoProcesadoMail($data));
+        } else {
+            Mail::to(Auth()->user()->email)
+                ->send(new RetiroProcesadoMail($data));
+        }
+
         return created_responses('Transaction');
     }
 
@@ -175,6 +230,14 @@ class TransactionController extends Controller
         $transaction = Transaction::where('id', $id)->first();
         $amount = $transaction->amount;
         $amount = ($transaction->type != 'withdrawal') ? $amount : $amount * -1;
+
+        $data = [
+            'name' => Auth()->user()->first_name,
+            'email' => Auth()->user()->email,
+            'amount' => $request->input('amount'),
+            'folio' => $transaction->folio,
+            'fecha' => $transaction->created_at
+        ];
         if ($request->input('status') == 'approved') {
             $account = Account::where('id', $transaction->accountId)->first();
             $account->balance += $amount;
@@ -201,6 +264,15 @@ class TransactionController extends Controller
                     ]);
                 }
             }
+        }
+
+        if ($transaction->type == 'deposit') {
+
+            Mail::to(Auth()->user()->email)
+                ->send(new DepositoProcesadoMail($data));
+        } else {
+            Mail::to(Auth()->user()->email)
+                ->send(new RetiroProcesadoMail($data));
         }
 
         return created_responses('Transaction');

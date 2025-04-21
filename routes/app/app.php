@@ -36,14 +36,17 @@ Route::post('create/transaction', [TransactionController::class, 'createTransact
 Route::post('edit/transaction/{id}', [TransactionController::class, 'editTransaction'])->name('transaction.editTransaction');
 Route::patch('edit/transaction2/{id}', [TransactionController::class, 'editTransaction2'])->name('transaction.editTransaction2');
 Route::get('account/transaction', [TransactionController::class, 'account'])->name('transaction.accountTransaction');
-Route::view('/transacciones', 'balance.balance')->name('balance.balance');
-Route::view('/depositos', 'deposito.deposito')->name('deposito.deposito');
-Route::view('/deposit/confirmation', 'deposit.confirmation')->name('deposit.confirmation');
+Route::middleware(['auth', 'verify.identity'])->group(function () { 
+    Route::view('/transacciones', 'balance.balance')->name('balance.balance');
+    Route::view('/depositos', 'deposito.deposito')->name('deposito.deposito');
+    Route::view('/deposit/confirmation', 'deposit.confirmation')->name('deposit.confirmation');
+    Route::view('/retiros', 'retiro.retiro')->name('retiro.retiro');
+    Route::view('/transacciones/admin', 'balance.admin')->name('balance.admin');
+    Route::view('/user/referidos', 'refered.index')->name('userRefered.index');
+});
 
-Route::view('/retiros', 'retiro.retiro')->name('retiro.retiro');
+Route::post('validate/document/{id}', [UserController::class, 'updateValidateDocument'])->name('validate.document');
 
-Route::view('/transacciones/admin', 'balance.admin')->name('balance.admin');
-Route::view('/user/referidos', 'refered.index')->name('userRefered.index');
 Route::post('/payment-methods', [PaymentMethodController::class, 'store'])->name('payment.accountTransaction');
 Route::view('/users-and-roles', 'user-roles.user-roles')->name('user-role.list');
 

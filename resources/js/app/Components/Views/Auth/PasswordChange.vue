@@ -10,7 +10,7 @@
                 <div class="row">
                     <div class="col-lg-3 col-xl-3 d-flex align-items-center">
                         <label for="user_old_password" class="text-left d-block mb-lg-2 mb-xl-0">
-                            {{ $t('old_password') }}
+                            Contraseña anterior
                         </label>
                     </div>
                     <div class="col-lg-8 col-xl-8">
@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-lg-3 col-xl-3">
                         <label for="user_password" class="text-left d-block mb-lg-2 mb-xl-0">
-                            {{ $t('new_password') }}
+                            Contraseña nueva
                         </label>
                     </div>
                     <div class="col-lg-8 col-xl-8">
@@ -45,7 +45,7 @@
                 <div class="row">
                     <div class="col-lg-3 col-xl-3 d-flex align-items-center">
                         <label for="user_password_confirmation" class="text-left d-block mb-lg-2 mb-xl-0">
-                            {{ $t('conform_password') }}
+                            Confirme contraseña
                         </label>
                     </div>
                     <div class="col-lg-8 col-xl-8">

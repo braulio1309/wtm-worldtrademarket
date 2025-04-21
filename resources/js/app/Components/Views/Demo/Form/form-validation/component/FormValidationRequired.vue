@@ -7,12 +7,12 @@
         <div class="card-body">
             <form ref="form" data-url="/form/validate-fields" class="mb-sm-0" :class="{'loading-opacity': preloader}">
                 <div class="form-group row align-items-center">
-                    <label class="col-md-2 mb-md-0">{{ $t('required') }}</label>
+                    <label class="col-md-2 mb-md-0">Obligatorio</label>
                     <div class="col-md-8">
                         <app-input type="text"
                                    v-model="inputs.text"
                                    :required="true"
-                                   :placeholder="$t('type_something')"/>
+                                   :placeholder="'Campo obligatorio'"/>
                     </div>
                 </div>
                 <div class="form-group row align-items-center">
@@ -44,11 +44,11 @@
                         <app-note class="mb-2"
                                   note-type="note-warning"
                                   :show-title="false"
-                                  :notes="[$t('password_hint_note')]"/>
+                                  :notes="['La contraseña debe contener una mayuscula, una minuscula, un caracter especial y numeros. Debe tener al menos 8 caracteres']"/>
                         <app-input type="password"
                                    v-model="inputs.confirm_password"
                                    same-as="inputs_password_input"
-                                   :placeholder="$t('confirm_password')"/>
+                                   :placeholder="'Confirme contrase;a'"/>
                     </div>
                 </div>
                 <div class="form-group row align-items-center">
